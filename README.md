@@ -7,4 +7,4 @@ a po prvom otvorení funguje aj bez internetu.
 - `manifest.webmanifest`, `sw.js`, `icon-*.png` — režim appky, ikony, offline
 - `spis.pdf`, `manual.pdf` — tlačená verzia prípadu strieborného vlka
 
-Hostované cez GitHub Pages na https://games.orieseks.com
+Hostované cez GitHub Pages na https://matusoriesek-sys.github.io/orieseks-games/
