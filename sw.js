@@ -1,4 +1,4 @@
-const C = "tog-c1d5ed71";
+const C = "tog-a93c76d8";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -12,6 +12,7 @@ self.addEventListener("fetch", e => {
   if (r.method !== "GET") return;
   const url = new URL(r.url);
   if (url.origin !== location.origin) return;
+  if (url.pathname.endsWith("levels.json")) { e.respondWith(fetch(r).catch(() => caches.match(r))); return; }
   const isDoc = r.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
   if (isDoc) {
     // appka: vzdy skus najprv siet, aby sa nove hry objavili hned
