@@ -1,7 +1,7 @@
 {
   "name": "The Oriešeks games",
   "short_name": "Oriešeks",
-  "description": "Detektívne a únikové hry pre deti.",
+  "description": "Obľúbené hry pre deti — zadarmo, bez reklám, bez registrácie. Plus vlastná séria detektívnych prípadov.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
