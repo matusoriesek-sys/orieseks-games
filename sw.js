@@ -1,10 +1,12 @@
-const C = "tog-a93c76d8";
+const C = "tog-2537701c";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
+const IMG = "tog-img-v1";                       // obrázky prežijú nasadenie novej verzie
 self.addEventListener("activate", e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k))))
+  e.waitUntil(caches.keys().then(ks => Promise.all(
+      ks.filter(k => k !== C && k !== IMG).map(k => caches.delete(k))))
     .then(() => self.clients.claim()));
 });
 self.addEventListener("fetch", e => {
@@ -25,10 +27,11 @@ self.addEventListener("fetch", e => {
     );
     return;
   }
+  const kam = /\.(png|jpg|jpeg|webp|gif|svg|ico)$/i.test(url.pathname) ? IMG : C;
   e.respondWith(
     caches.match(r).then(hit => hit || fetch(r).then(res => {
       const copy = res.clone();
-      caches.open(C).then(c => c.put(r, copy)).catch(() => {});
+      caches.open(kam).then(c => c.put(r, copy)).catch(() => {});
       return res;
     }))
   );
