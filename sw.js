@@ -1,9 +1,9 @@
-const C = "tog-9d65dbbd";
+const C = "tog-bf0cb927";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
-const IMG = "tog-img-v1";                       // obrázky prežijú nasadenie novej verzie
+const IMG = "tog-img-v2";                       // obrázky prežijú nasadenie novej verzie
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(
       ks.filter(k => k !== C && k !== IMG).map(k => caches.delete(k))))
@@ -30,8 +30,11 @@ self.addEventListener("fetch", e => {
   const kam = /\.(png|jpg|jpeg|webp|gif|svg|ico)$/i.test(url.pathname) ? IMG : C;
   e.respondWith(
     caches.match(r).then(hit => hit || fetch(r).then(res => {
-      const copy = res.clone();
-      caches.open(kam).then(c => c.put(r, copy)).catch(() => {});
+      // do cache patri len uspesna odpoved - 404 by tam ostalo navzdy
+      if (res && res.ok && res.status === 200 && res.type !== "opaque"){
+        const copy = res.clone();
+        caches.open(kam).then(c => c.put(r, copy)).catch(() => {});
+      }
       return res;
     }))
   );
