@@ -1,4 +1,4 @@
-const C = "tog-e3613a02";
+const C = "tog-10c7b55b";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
