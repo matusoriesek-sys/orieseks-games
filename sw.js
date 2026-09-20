@@ -1,10 +1,10 @@
-const C = "tog-18db9fbe";
+const C = "tog-4825e10a";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
 const ROOT = new URL("./", self.registration.scope).pathname;   // koren nasadenia appky
-const IMG = "tog-img-v2";                       // obrázky prežijú nasadenie novej verzie
+const IMG = "tog-img-v3";                       // obrázky prežijú nasadenie novej verzie
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(
       ks.filter(k => k !== C && k !== IMG).map(k => caches.delete(k))))
@@ -33,6 +33,26 @@ self.addEventListener("fetch", e => {
     return;
   }
   const kam = /\.(png|jpg|jpeg|webp|gif|svg|ico)$/i.test(url.pathname) ? IMG : C;
+  // Subory hier, ktore sa este vyvijaju (/legendy/), sa nesmu zamknut v cache:
+  // grafika sa v nich prepisuje pod tou istou adresou a cache-first by na
+  // telefone drzal starú verziu navzdy. Preto stale-while-revalidate:
+  // ukaz z cache hned, ale na pozadi stiahni novu a uloz ju na priste.
+  const zive = url.pathname.startsWith(ROOT + "legendy/");
+  if (zive) {
+    e.respondWith(
+      caches.match(r).then(hit => {
+        const siet = fetch(r).then(res => {
+          if (res && res.ok && res.status === 200 && res.type !== "opaque"){
+            const copy = res.clone();
+            caches.open(kam).then(c => c.put(r, copy)).catch(() => {});
+          }
+          return res;
+        }).catch(() => hit || Response.error());
+        return hit || siet;
+      })
+    );
+    return;
+  }
   e.respondWith(
     caches.match(r).then(hit => hit || fetch(r).then(res => {
       // do cache patri len uspesna odpoved - 404 by tam ostalo navzdy
