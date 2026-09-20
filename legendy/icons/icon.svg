@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a6330"/>
+      <stop offset="1" stop-color="#22351e"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- vrch / kopec -->
+  <path d="M96 360 L208 200 L288 296 L344 224 L416 360 Z" fill="#4d7d3d"/>
+  <!-- statok / dom -->
+  <g>
+    <rect x="206" y="300" width="100" height="80" fill="#a87146"/>
+    <path d="M196 304 L256 248 L316 304 Z" fill="#925d3b"/>
+    <rect x="242" y="332" width="28" height="48" fill="#553428"/>
+  </g>
+  <!-- zlatá hviezda / legenda -->
+  <path d="M256 92 l16 40 43 3 -33 28 11 42 -37 -23 -37 23 11 -42 -33 -28 43 -3 z" fill="#e9c155"/>
+  <rect x="96" y="372" width="320" height="20" rx="10" fill="#284022"/>
+</svg>

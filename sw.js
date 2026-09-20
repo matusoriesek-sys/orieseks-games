@@ -1,8 +1,9 @@
-const C = "tog-96b0f127";
+const C = "tog-18db9fbe";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./favicon-32.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
 });
+const ROOT = new URL("./", self.registration.scope).pathname;   // koren nasadenia appky
 const IMG = "tog-img-v2";                       // obrázky prežijú nasadenie novej verzie
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(
@@ -17,13 +18,17 @@ self.addEventListener("fetch", e => {
   if (url.pathname.endsWith("levels.json")) { e.respondWith(fetch(r).catch(() => caches.match(r))); return; }
   const isDoc = r.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
   if (isDoc) {
+    // len korenovy dokument je appka; /legendy/ je samostatna stranka a nesmie prepisat jej cache
+    const isHub = url.pathname === ROOT || url.pathname === ROOT + "index.html";
     // appka: vzdy skus najprv siet, aby sa nove hry objavili hned
     e.respondWith(
       fetch(r).then(res => {
-        const copy = res.clone();
-        caches.open(C).then(c => c.put("./index.html", copy)).catch(() => {});
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(C).then(c => c.put(isHub ? "./index.html" : r, copy)).catch(() => {});
+        }
         return res;
-      }).catch(() => caches.match(r).then(hit => hit || caches.match("./index.html")))
+      }).catch(() => caches.match(r).then(hit => hit || (isHub ? caches.match("./index.html") : Response.error())))
     );
     return;
   }
